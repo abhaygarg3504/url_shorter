@@ -23,14 +23,17 @@ export const loginUser = async (email, password) => {
     throw error;
   }
 
-  const isMatch = await bcrypt.compare(password, user.password); 
-
+  const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     const error = new Error("Invalid email or password");
     error.statusCode = 401;
     throw error;
   }
 
+  // Remove password before sending user object
+  const { password: _, ...userWithoutPassword } = user;
+
   const token = signToken({ id: user.id });
-  return token;
+
+  return { token, user: userWithoutPassword };
 };

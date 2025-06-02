@@ -14,11 +14,10 @@ const Navbar: React.FC = () => {
           </Link>
           <div>
             <Link
-              to='/login'
+              to="/auth"
               className="ml-4 px-5 py-2 bg-white text-blue-700 font-semibold rounded-full shadow hover:bg-blue-50 transition duration-200"
-              preload="intent"
             >
-              Login
+              Logout
             </Link>
           </div>
         </div>

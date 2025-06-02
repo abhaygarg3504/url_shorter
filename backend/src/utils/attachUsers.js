@@ -7,7 +7,7 @@ export const attachUser = async (req, res, next) => {
 
   try {
     const decoded = verifyToken(token);
-    console.log("Decoded JWT:", decoded);
+    // console.log("Decoded JWT:", decoded);
 
     const userId = decoded._id || decoded.id.id; 
     if (!userId) {

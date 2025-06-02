@@ -8,6 +8,7 @@ import {
   findValidOtp,
 } from "../dao/user_dao.js";
 import { sendEmail } from "../utils/sendEmails.js";
+import bcrypt from "bcryptjs";
 export const register_user = async (req, res) => {
   try {
     const { name, email, password, avatar } = req.body;
@@ -31,23 +32,26 @@ export const register_user = async (req, res) => {
 };
 
 export const login_user = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const token = await loginUser(email, password);
+  try {
+    const { email, password } = req.body;
+    const { token, user } = await loginUser(email, password);
 
-        res.cookie("accessToken", token, cookieOption);
-        res.status(200).json({
-            success: true,
-            message: "Login Successfully",
-            token
-        });
-    } catch (error) {
-        res.status(error.statusCode || 401).json({
-            success: false,
-            message: error.message || "Login failed",
-        });
-    }
+    res.cookie("accessToken", token, cookieOption);
+
+    res.status(200).json({
+      success: true,
+      message: "Login Successfully",
+      token,
+      user, 
+    });
+  } catch (error) {
+    res.status(error.statusCode || 401).json({
+      success: false,
+      message: error.message || "Login failed",
+    });
+  }
 };
+
 
 export const setUpOTP = async (req, res) => {
   try {
@@ -111,3 +115,17 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const logout_user = async(req,res)=>{
+  try {
+     res.clearCookie("accessToken", cookieOption); 
+    res.status(200).json({
+      success: true,
+      message: "Logout successful",
+    });
+    
+  } catch (error) {
+    return res.status(404).json({success: false, message: error})
+    console.log(`error in logout user is`, error)
+  }
+}

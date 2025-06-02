@@ -6,4 +6,5 @@ export const homepageRoute = new Route({
   getParentRoute: () => rootRoute,
   path: '/',
   component: HomePage,
+  
 });

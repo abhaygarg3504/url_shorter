@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import GoogleLoginButton from "../components/GoogleLoginButton";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { registerUser } from "../api/user_api";
 
 interface AuthProps {
@@ -14,20 +14,37 @@ const Register: React.FC<AuthProps> = ({ standalone = true }) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      await registerUser(name, email, password);
-      console.log("Register success");
-    } catch (err) {
-      setError("Registration failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
+
+  const isStrongPassword = validatePassword(password);
+  if (!isStrongPassword) {
+    setError("Password must be at least 6 characters, include an uppercase letter, and a special character.");
+    setLoading(false);
+    return;
+  }
+
+  try {
+    await registerUser(name, email, password);
+    navigate({ to: "/dashboard" });
+  } catch (err) {
+    setError("Registration failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+const validatePassword = (password: string) => {
+  const minLength = password.length >= 6;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  return minLength && hasUpperCase && hasSpecialChar;
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-blue-200">

@@ -25,7 +25,7 @@ router.get(
 
     res
       .cookie("accessToken", token, cookieOption)
-      .redirect(`${process.env.FRONTEND_URL}`);
+      .redirect(`${process.env.FRONTEND_URL}/dashboard`);
   }
 );
 

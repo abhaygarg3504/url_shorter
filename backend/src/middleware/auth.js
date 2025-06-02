@@ -12,7 +12,9 @@ export const authMiddleWare = async (req, res, next) => {
 
   try {
     const decoded = verifyToken(token); 
-    const user = await findUserById(decoded);
+   const userId = decoded._id || decoded.id.id; 
+   const user = await findUserById(userId);
+
     if (!user) {
       return res.status(401).json({
         message: "Unauthorized",
