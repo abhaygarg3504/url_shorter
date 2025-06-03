@@ -17,6 +17,12 @@ export const getCurrentUser = async () => {
   return data;
 };
 
+export const getAllShortUrls = async () => {
+  const { data } = await axiosInstance.post("/api/createUrl/urls", {}, {
+    withCredentials: true, 
+  });
+  return data;
+};
 
 export const logoutUser = async () => {
   const { data } = await axiosInstance.post("/api/auth/logout_user");

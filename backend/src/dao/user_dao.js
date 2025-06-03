@@ -25,6 +25,17 @@ export const createUser = async (name, email, password, avatar) => {
 
   return newUser;
 };
+
+export const getAllUrls = async (userId) => {
+  return await prisma.shorter.findMany({
+    where: {
+      userId: userId,
+    },
+  });
+};
+
+
+
 export const updateUserPassword = async (email, hashedPassword) => {
   return await prisma.user.update({
     where: { email },

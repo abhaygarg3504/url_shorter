@@ -36,7 +36,7 @@ const Login:React.FC<AuthProps> = ({ standalone = true }) => {
     try {
       const data =  await loginUser(email, password);
       console.log(data);
-      dispatch(login(data.user))
+     dispatch(login({ user: data.user, token: data.token })); 
       navigate({to: "/dashboard"})
     } catch {
       setError("Login failed. Please check your credentials.");

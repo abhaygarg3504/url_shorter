@@ -1,24 +1,29 @@
-import React, { useState } from 'react';
-import { createShortUrl } from '../api/shortUrl_api';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { createShortUrl } from "../api/shortUrl_api";
+import type { RootState } from "../store/store";
+
 const UrlForm: React.FC = () => {
-  const [url, setUrl] = useState('');
-const [shortUrl, setShortUrl] = useState('');
-const [copied, setCopied] = useState(false);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setCopied(false);
-  setShortUrl('');
+  const [url, setUrl] = useState("");
+  const [slug, setSlug] = useState(""); // For custom short URL
+  const [shortUrl, setShortUrl] = useState("");
+  const [copied, setCopied] = useState(false);
 
-  try {
-    const result  = await createShortUrl(url); 
-    setShortUrl(result);
-  } catch (error) {
-    console.error('Error shortening URL:', error);
-    alert('Failed to shorten the URL. Please try again.');
-  }
-};
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCopied(false);
+    setShortUrl("");
 
+    try {
+      const result = await createShortUrl(url, isAuthenticated ? slug : undefined);
+      setShortUrl(result);
+    } catch (error) {
+      console.error("Error shortening URL:", error);
+      alert("Failed to shorten the URL. Please try again.");
+    }
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shortUrl);
@@ -38,9 +43,26 @@ const handleSubmit = async (e: React.FormEvent) => {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="https://www.google.com"
+          placeholder="https://www.example.com"
           required
         />
+
+        {isAuthenticated && (
+          <>
+            <label htmlFor="slug" className="font-semibold text-gray-700">
+              Custom Slug (optional):
+            </label>
+            <input
+              id="slug"
+              type="text"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="e.g. my-custom-url"
+            />
+          </>
+        )}
+
         <button
           type="submit"
           className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
@@ -63,7 +85,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               onClick={handleCopy}
               className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition duration-200"
             >
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? "Copied!" : "Copy"}
             </button>
           </div>
         </div>

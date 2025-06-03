@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 import UrlForm from "../components/UrlForm";
+import UseUrl from "./UseUrl";
 
 const Dashboard = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -13,6 +14,7 @@ const Dashboard = () => {
           <h2 className="text-2xl font-bold mb-4">Welcome, {user?.name || "User"}!</h2>
           <UrlForm />
           {/* You can add your custom URL logic/component here */}
+          <UseUrl/>
         </>
       ) : (
         <div className="text-center text-lg text-red-600">

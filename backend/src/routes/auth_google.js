@@ -27,7 +27,7 @@ const token = signToken({ _id: user.id, name: user.name, email: user.email, prov
 
     // Pass token and user info as query params to frontend
     // const redirectUrl = `${process.env.FRONTEND_URL}/oauth-success?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`;
-const redirectUrl = `${process.env.FRONTEND_URL}/oauth-success?token=${token}`;
+const redirectUrl = `${process.env.FRONTEND_URL}/oauth-success?token=${token}&user=${encodeURIComponent(JSON.stringify(user))}`;
 
     res
       .cookie("accessToken", token, cookieOption)
