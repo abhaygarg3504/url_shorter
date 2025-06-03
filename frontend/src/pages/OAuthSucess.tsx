@@ -4,6 +4,13 @@ import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { login } from "../store/slice/authSlice";
 
+interface DecodedUser {
+  name: string;
+  email: string;
+  _id?: string;
+  provider?: string;
+}
+
 const OAuthSuccess = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -12,8 +19,9 @@ const OAuthSuccess = () => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
     if (token) {
-      const user: any = jwtDecode(token);
-      dispatch(login({ user: { name: user.name, email: user.email }, token }));
+      const user = jwtDecode<DecodedUser>(token);
+      dispatch(login({ user, token }));
+      // console.log(token)
       navigate({ to: "/dashboard" });
     } else {
       navigate({ to: "/auth" });
