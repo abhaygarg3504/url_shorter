@@ -34,7 +34,7 @@ const Login:React.FC<AuthProps> = ({ standalone = true }) => {
     setLoading(true);
     setError(null);
     try {
-       const data =  await loginUser(email, password);
+      const data =  await loginUser(email, password);
       console.log(data);
       dispatch(login(data.user))
       navigate({to: "/dashboard"})

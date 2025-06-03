@@ -2,7 +2,17 @@ import { findUserById } from "../dao/user_dao.js";
 import { verifyToken } from "../utils/helper.js";
 
 export const authMiddleWare = async (req, res, next) => {
-  const token = req.cookies.accessToken;
+  // Try to get token from Authorization header
+  let token = null;
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    token = authHeader.split(" ")[1];
+  }
+
+  // Fallback to cookie if no header token
+  if (!token) {
+    token = req.cookies.accessToken;
+  }
 
   if (!token) {
     return res.status(401).json({
@@ -11,10 +21,10 @@ export const authMiddleWare = async (req, res, next) => {
   }
 
   try {
-    const decoded = verifyToken(token); 
-   const userId = decoded._id || decoded.id.id; 
-   const user = await findUserById(userId);
+    const decoded = verifyToken(token);
+    const userId = decoded._id || decoded.id?.id || decoded.id;
 
+    const user = await findUserById(userId);
     if (!user) {
       return res.status(401).json({
         message: "Unauthorized",

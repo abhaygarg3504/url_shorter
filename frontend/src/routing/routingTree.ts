@@ -5,6 +5,7 @@ import { dashboardRoute } from './dashboard';
 import RootLayout from '../RootLayout';
 import { QueryClient } from '@tanstack/react-query';
 import { store } from '../store/store';
+import { oauthSuccessRoute } from './oauthSucess';
 
 export const rootRoute = createRootRoute({
   component: RootLayout,
@@ -14,6 +15,7 @@ export const routeTree = rootRoute.addChildren([
   homepageRoute,
   authRoute,
   dashboardRoute,
+  oauthSuccessRoute
 ]);
 
 export const router = createRouter({ routeTree, 

@@ -21,11 +21,14 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   async (req, res) => {
     const user = req.user;
-    const token = signToken({ id: user.id });
+    const token = signToken({ id: user.id, name: user.name, email: user.email });
+
+    // Pass token and user info as query params to frontend
+    const redirectUrl = `${process.env.FRONTEND_URL}/oauth-success?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`;
 
     res
       .cookie("accessToken", token, cookieOption)
-      .redirect(`${process.env.FRONTEND_URL}/dashboard`);
+      .redirect(redirectUrl);
   }
 );
 
