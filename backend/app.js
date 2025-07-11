@@ -2,6 +2,7 @@ import express from "express";
 import { connectToDatabase } from "./src/prisma/client.js";
 import shortUrlRoutes from "./src/routes/short_urlRoute.js";
 import authRoutes from "./src/routes/auth_Route.js"
+import analyiticsRoutes from "./src/routes/analytics_Route.js"
 import { redirectURL } from "./src/controllers/short_urlController.js";
 import cors from "cors"
 import cookieParser from "cookie-parser";
@@ -24,7 +25,7 @@ app.get("/", (req, res) => {
 app.get("/:id", redirectURL)
 app.use(cookieParser())
 app.use(attachUser)
-// ✅ Set up session for Passport (required)
+
 app.use(session({
   secret: process.env.SESSION_SECRET || "some-random-secret",
   resave: false,
@@ -40,6 +41,7 @@ async function startServer() {
   app.use("/api/createUrl", shortUrlRoutes);
   app.use("/api/auth", authRoutes)
   app.use("/api/auth", googleAuthRoutes); 
+  app.use("/api/analyitics", analyiticsRoutes)
 
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {

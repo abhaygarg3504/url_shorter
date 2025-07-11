@@ -34,8 +34,6 @@ export const getAllUrls = async (userId) => {
   });
 };
 
-
-
 export const updateUserPassword = async (email, hashedPassword) => {
   return await prisma.user.update({
     where: { email },

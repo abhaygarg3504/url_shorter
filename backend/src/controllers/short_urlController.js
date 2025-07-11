@@ -1,5 +1,6 @@
 import { getAllUrls } from "../dao/user_dao.js";
 import { findUrlFromShortUrl } from "../dao/user_url.js";
+import { trackClick } from "../services/analytics_services.js";
 import { createShortUrlWithoutUser, createShortURLWithUser } from "../services/short_url_services.js";
 
 export const createShortURL = async (req, res) => {
@@ -29,6 +30,9 @@ export const redirectURL = async (req, res) => {
   try {
     const { id } = req.params;
     const url = await findUrlFromShortUrl(id);
+      trackClick(id, req).catch(error => {
+      console.error('Error tracking click:', error);
+    });
     res.redirect(url.fullUrl);
   } catch (error) {
     console.log(`error in redirect url is `, error);

@@ -112,7 +112,7 @@ const UseUrl: React.FC = () => {
                   </TableCell>
                   <TableCell>
                     <a
-                      href={`${import.meta.env.API_URL}/${url.shortUrl}`}
+                      href={`${import.meta.env.VITE_API_URL}${url.shortUrl}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

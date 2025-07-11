@@ -19,13 +19,16 @@ model User {
 
 
 model Shorter {
-  id       String  @id @default(cuid())
-  fullUrl  String
-  shortUrl String  @unique
-  clicks   Int     @default(0)
+  id        String   @id @default(cuid())
+  fullUrl   String
+  shortUrl  String   @unique
+  clicks    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   userId   String? 
   user     User?   @relation(fields: [userId], references: [id])
+  clickAnalytics ClickAnalytics[]
 
   @@index([shortUrl])
 }
@@ -38,4 +41,40 @@ model Token {
   expiresAt DateTime
 
   @@index([email])
+}
+
+// New Analytics Models
+model ClickAnalytics {
+  id        String   @id @default(cuid())
+  shortUrl  String
+  ipAddress String
+  userAgent String
+  timestamp DateTime @default(now())
+  
+  // Parsed data
+  country   String?
+  region    String?
+  city      String?
+  
+  // Device info
+  deviceType String?  // mobile, desktop, tablet
+  browser    String?
+  os         String?
+  
+  // Referrer info
+  referrer   String?
+  referrerType String? // social, email, ads, direct, search
+  utmSource    String?
+  utmMedium    String?
+  utmCampaign  String?
+  utmTerm      String?
+  utmContent   String?
+  
+  // Relationship
+  shorter   Shorter @relation(fields: [shortUrl], references: [shortUrl])
+  
+  @@index([shortUrl])
+  @@index([timestamp])
+  @@index([country])
+  @@index([referrerType])
 }
