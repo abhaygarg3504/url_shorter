@@ -10,6 +10,7 @@ import { attachUser } from "./src/utils/attachUsers.js";
 import session from "express-session";
 import passport from "passport";
 import googleAuthRoutes from "./src/routes/auth_google.js"
+import qrCodeRoutes from "./src/routes/qr_Route.js"
 
 const app = express();
 app.use(cors({
@@ -42,6 +43,7 @@ async function startServer() {
   app.use("/api/auth", authRoutes)
   app.use("/api/auth", googleAuthRoutes); 
   app.use("/api/analyitics", analyiticsRoutes)
+  app.use("/api/qr", qrCodeRoutes)
 
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {

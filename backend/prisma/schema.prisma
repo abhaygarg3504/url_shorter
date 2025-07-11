@@ -29,6 +29,8 @@ model Shorter {
   userId   String? 
   user     User?   @relation(fields: [userId], references: [id])
   clickAnalytics ClickAnalytics[]
+  qrCode         QRCode?
+  qrCodeEnabled  Boolean @default(false)
 
   @@index([shortUrl])
 }
@@ -78,3 +80,84 @@ model ClickAnalytics {
   @@index([country])
   @@index([referrerType])
 }
+
+
+model QRCode {
+  id        String   @id @default(cuid())
+  shortUrl  String   @unique
+  qrData    String   // Base64 encoded QR code image
+  
+  // QR Code customization settings
+  isDynamic Boolean  @default(false)
+  
+  // Design settings
+  foregroundColor String @default("#000000")
+  backgroundColor String @default("#ffffff")
+  
+  // Logo settings
+  hasLogo     Boolean @default(false)
+  logoUrl     String?
+  logoSize    Int     @default(20) // percentage
+  
+  // Style settings
+  dotStyle    String  @default("square") // square, circle, rounded
+  cornerStyle String  @default("square") // square, circle, rounded
+  
+  // Gradient settings
+  hasGradient Boolean @default(false)
+  gradientType String @default("linear") // linear, radial
+  gradientDirection String @default("to-bottom") // CSS gradient direction
+  gradientStartColor String?
+  gradientEndColor String?
+  
+  // Pattern settings
+  pattern     String @default("solid") // solid, dots, lines
+  
+  // Border settings
+  hasBorder   Boolean @default(false)
+  borderColor String @default("#000000")
+  borderWidth Int    @default(1)
+  
+  // Size and quality
+  size        Int    @default(200) // pixel size
+  quality     String @default("M") // L, M, Q, H
+  
+  // Analytics
+  scans       Int    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relationship
+  shorter     Shorter @relation(fields: [shortUrl], references: [shortUrl])
+  qrScans     QRScan[]
+  
+  @@index([shortUrl])
+}
+
+model QRScan {
+  id        String   @id @default(cuid())
+  qrCodeId  String
+  ipAddress String
+  userAgent String
+  timestamp DateTime @default(now())
+  
+  // Parsed data
+  country   String?
+  region    String?
+  city      String?
+  
+  // Device info
+  deviceType String?  // mobile, desktop, tablet
+  browser    String?
+  os         String?
+  
+  // Referrer info
+  referrer   String?
+  
+  // Relationship
+  qrCode    QRCode @relation(fields: [qrCodeId], references: [id])
+  
+  @@index([qrCodeId])
+  @@index([timestamp])
+}
+
