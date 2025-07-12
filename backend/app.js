@@ -11,6 +11,8 @@ import session from "express-session";
 import passport from "passport";
 import googleAuthRoutes from "./src/routes/auth_google.js"
 import qrCodeRoutes from "./src/routes/qr_Route.js"
+import customDomainRoute from "./src/routes/custom_domain_Route.js"
+import vanityUrlRoute from "./src/routes/vanity_url_Route.js"
 
 const app = express();
 app.use(cors({
@@ -44,6 +46,8 @@ async function startServer() {
   app.use("/api/auth", googleAuthRoutes); 
   app.use("/api/analyitics", analyiticsRoutes)
   app.use("/api/qr", qrCodeRoutes)
+  app.use("/api/custom-domains", customDomainRoute)
+  app.use("/api/vanity-urls", vanityUrlRoute)
 
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {

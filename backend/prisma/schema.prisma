@@ -15,8 +15,27 @@ model User {
   avatar   String  @default("https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp")
 
   shorter Shorter[]
+  customDomains CustomDomain[]
 }
 
+model CustomDomain {
+  id            String   @id @default(cuid())
+  domain        String   @unique
+  userId        String
+  isVerified    Boolean  @default(false)
+  verificationToken String @unique
+  dnsRecord     String  
+  sslEnabled    Boolean  @default(false)
+  sslExpiresAt  DateTime?
+  status        String   @default("pending") 
+  lastChecked   DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shorterUrls   Shorter[]
+  @@index([domain])
+  @@index([userId])
+}
 
 model Shorter {
   id        String   @id @default(cuid())
@@ -25,14 +44,20 @@ model Shorter {
   clicks    Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  customDomainId String?
+  customDomain   CustomDomain? @relation(fields: [customDomainId], references: [id])
+  isVanity      Boolean @default(false)
+  vanitySlug    String?
+  title         String? 
+  description   String? 
   userId   String? 
   user     User?   @relation(fields: [userId], references: [id])
   clickAnalytics ClickAnalytics[]
   qrCode         QRCode?
   qrCodeEnabled  Boolean @default(false)
-
   @@index([shortUrl])
+  @@index([customDomainId])
+  @@index([vanitySlug])
 }
 
 model Token {
@@ -45,20 +70,15 @@ model Token {
   @@index([email])
 }
 
-// New Analytics Models
 model ClickAnalytics {
   id        String   @id @default(cuid())
   shortUrl  String
   ipAddress String
   userAgent String
   timestamp DateTime @default(now())
-  
-  // Parsed data
   country   String?
   region    String?
   city      String?
-  
-  // Device info
   deviceType String?  // mobile, desktop, tablet
   browser    String?
   os         String?
@@ -80,7 +100,6 @@ model ClickAnalytics {
   @@index([country])
   @@index([referrerType])
 }
-
 
 model QRCode {
   id        String   @id @default(cuid())

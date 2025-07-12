@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { createShortUrl } from "../api/shortUrl_api";
 import type { RootState } from "../store/store";
-
 import { createQRCode } from "../api/qr_api";
 import type {QRCustomization} from "../api/qr_api"
 
@@ -10,7 +9,7 @@ const UrlForm: React.FC = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const [url, setUrl] = useState("");
-  const [slug, setSlug] = useState(""); // For custom short URL
+  const [slug, setSlug] = useState(""); 
   const [shortUrl, setShortUrl] = useState("");
   const [copied, setCopied] = useState(false);
   const [showQROptions, setShowQROptions] = useState(false);
