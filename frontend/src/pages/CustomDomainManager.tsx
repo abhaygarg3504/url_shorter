@@ -103,22 +103,41 @@ const CustomDomainManager: React.FC = () => {
       setAlert({ type: 'error', message: error.response?.data?.message || 'Failed to add domain' });
     }
   };
+// In src/components/CustomDomainManager.tsx - handleVerifyDomain method
+// Replace with this improved version:
 
-  const handleVerifyDomain = async (domainId: string) => {
-    try {
-      const response = await verifyCustomDomain(domainId);
-      if (response.success) {
-        setAlert({ type: 'success', message: 'Domain verified successfully' });
-        setVerificationOpen(false);
-        fetchDomains();
-      } else {
-        setAlert({ type: 'error', message: response.message || 'Domain verification failed' });
-      }
-    } catch (error: any) {
-      console.error('Error verifying domain:', error);
-      setAlert({ type: 'error', message: error.response?.data?.message || 'Failed to verify domain' });
+const handleVerifyDomain = async (domainId: string) => {
+  try {
+    setLoading(true);
+    setAlert(null); // Clear previous alerts
+    
+    const response = await verifyCustomDomain(domainId);
+    
+    if (response.success) {
+      setAlert({ type: 'success', message: response.message });
+      setVerificationOpen(false);
+      fetchDomains();
+    } else {
+      setAlert({ 
+        type: 'error', 
+        message: response.message || 'Domain verification failed. Please check your DNS settings and try again.' 
+      });
     }
-  };
+  } catch (error: any) {
+    console.error('Error verifying domain:', error);
+    
+    let errorMessage = 'Failed to verify domain. Please try again.';
+    if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    setAlert({ type: 'error', message: errorMessage });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleDeleteDomain = async (domainId: string) => {
     if (!confirm('Are you sure you want to delete this domain?')) return;

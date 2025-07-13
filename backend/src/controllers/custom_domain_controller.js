@@ -46,17 +46,21 @@ export const verifyDomain = async (req, res) => {
       return res.status(401).json({ success: false, message: 'User not authenticated' });
     }
 
+    if (!domainId) {
+      return res.status(400).json({ success: false, message: 'Domain ID is required' });
+    }
+
     const result = await CustomDomainService.verifyDomain(domainId, userId);
     
-    res.status(200).json({
+    return res.status(200).json({
       success: result.success,
       message: result.message
     });
   } catch (error) {
     console.error('Error verifying domain:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: error.message || 'Internal server error'
+      message: 'Internal server error during domain verification'
     });
   }
 };

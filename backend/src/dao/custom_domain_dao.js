@@ -36,7 +36,7 @@ export const getUserCustomDomains = async (userId) => {
     where: { userId },
     include: {
       _count: {
-        select: { shorterUrls: true }  // ✅ Correct field name
+        select: { shorterUrls: true }  
       }
     },
     orderBy: { createdAt: 'desc' }

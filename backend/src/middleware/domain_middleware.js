@@ -5,11 +5,20 @@ import { trackClick } from '../services/analytics_services.js';
 
 export const domainMiddleware = async (req, res, next) => {
   try {
-    const host = req.get('host');
-    const baseDomain = process.env.BASE_DOMAIN || 'localhost:3000';
+     let host = req.get('host');
+    
+    // Remove port if present
+    if (host && host.includes(':')) {
+      host = host.split(':')[0];
+    }
+    
+    const baseDomain = process.env.BASE_DOMAIN || 'localhost';
+    
+    // Clean base domain of port as well
+    const cleanBaseDomain = baseDomain.includes(':') ? baseDomain.split(':')[0] : baseDomain;
     
     // If it's the base domain, continue normal processing
-    if (host === baseDomain || host.includes('localhost')) {
+    if (host === cleanBaseDomain || host === 'localhost') {
       return next();
     }
     
@@ -56,14 +65,20 @@ export const validateCustomDomain = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Domain is required' });
     }
     
-    // Basic domain validation
-    const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
     const cleanDomain = CustomDomainService.cleanDomain(domain);
+   const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
     
     if (!domainRegex.test(cleanDomain)) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Invalid domain format' 
+        message: 'Invalid domain format. Please enter a valid domain like example.com' 
+      });
+    }
+
+    if (cleanDomain.length > 253) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Domain name too long' 
       });
     }
     
